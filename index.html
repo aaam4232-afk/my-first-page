@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>موقعي الشخصي - مشروع HTML5 النهائي</title>
+
+    
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        /* استيراد الخط */
+
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+        /* إعادة تعيين الأنماط الأساسية والخط */
+
+        * {
+
+            box-sizing: border-box;
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        body {
+
+            font-family: 'Tajawal', sans-serif;
+
+            background-color: #ffffff; 
+
+            color: hwb(0 0% 100%);
+
+            direction: rtl; 
+
+            text-align: right;
+
+        }
+
+        .container {
+
+            max-width: 800px;
+
+            margin: 20px auto;
+
+            padding: 0 15px;
+
+        }
+
+        /* * تنسيق رأس الصفحة (Header)
+
+         */
+
+        .main-header {
+
+            background-color: #ffb648; 
+
+            color: rgb(0, 0, 0);
+
+            padding: 20px 0;
+
+            text-align: center;
+
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+        }
+
+        .main-header h1 {
+
+            font-size: 1.8em;
+
+            margin-bottom: 10px;
+
+        }
+
+        .main-nav a {
+
+            color: rgb(0, 0, 0)
+
+            text-decoration: none;
+
+            padding: 0 15px;
+
+            font-weight: 700;
+
+            transition: color 0.3s;
+
+        }
+
+        .main-nav a:hover {
+
+            color: #000000;
+
+        }
+
+        /* * تنسيق الأقسام (Section Boxes)
+
+         */
+
+        .section-box {
+
+            background-color: rgb(235, 229, 228);
+
+            padding: 30px;
+
+            margin-bottom: 25px;
+
+            border-radius: 8px;
+
+            box-shadow: 0 2px 4px rgba(10, 2, 2, 0.05);
+
+        }
+
+        .section-title {
+
+            color: #000000; 
+
+            font-size: 1.5em;
+
+            border-bottom: 2px solid #eee;
+
+            padding-bottom: 10px;
+
+            margin-bottom: 20px;
+
+        }
+
+        /*
+
+         * تنسيق جدول المهارات
+
+         */
+
+        .table-container {
+
+            overflow-x: auto;
+
+        }
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            text-align: right;
+
+        }
+
+        table th, table td {
+
+            border: 1px solid #ddd;
+
+            padding: 12px;
+
+        }
+
+        table th {
+
+            background-color: #f0f0f0;
+
+            color: #000000;
+
+            font-weight: 700;
+
+            width: 50%; 
+
+        }
+
+        /*
+
+         * تنسيق نموذج التواصل (Contact Form)
+
+         */
+
+        #contact-form label {
+
+            display: block;
+
+            margin-top: 15px;
+
+            margin-bottom: 5px;
+
+            font-weight: 700;
+
+        }
+
+        #contact-form input[type="text"],
+
+        #contact-form input[type="email"],
+
+        #contact-form textarea {
+
+            width: 100%;
+
+            padding: 10px;
+
+            margin-bottom: 10px;
+
+            border: 1px solid #e01313;
+
+            border-radius: 4px;
+
+            resize: vertical; 
+
+        }
+
+        .submit-button {
+
+            background-color: #eb6d07;
+
+            color: rgb(255, 255, 255);
+
+            padding: 12px 25px;
+
+            border: none;
+
+            border-radius: 4px;
+
+            cursor: pointer;
+
+            float: left; 
+
+            margin-top: 10px;
+
+            transition: background-color 0.3s;
+
+        }
+
+        .submit-button:hover {
+
+            background-color: #f73232;
+
+        }
+
+        /*
+
+         * تنسيق تذييل الصفحة (Footer)
+
+         */
+
+        .main-footer {
+
+            background-color: #fd9f13;
+
+            color: rgb(0, 0, 0);
+
+            text-align: center;
+
+            padding: 15px 0;
+
+            font-size: 0.9em;
+
+            clear: both; 
+
+        }
+
+    </style>
+
+    </head>
+
+<body>
+
+    <header class="main-header">
+
+        <h1>مرحباً بكم في موقعي الشخصي</h1>
+
+        <nav class="main-nav">
+
+            <a href="#about-me">من أنا</a>
+
+            <a href="#skills">المهارات</a>
+
+            <a href="#contact">تواصل معي</a>
+
+        </nav>
+
+    </header>
+
+    <main class="container">
+
+        <section id="about-me" class="section-box">
+
+            <h2 class="section-title">من أنا ؟</h2>
+
+            <p>أنا طالب أتعلم أساسيات تصميم صفحات الويب باستخدام HTML5. هذا المشروع النهائي يوضح ما تعلمته خلال الكورس.</p>
+
+        </section>
+
+        <section id="skills" class="section-box">
+
+            <h2 class="section-title">المهارات</h2>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>المهارة</th>
+
+                            <th>المستوى</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>HTML5</td>
+
+                            <td>جيد جداً</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>CSS</td>
+
+                            <td>مبتدئ</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>JavaScript</td>
+
+                            <td>قيد التعلم</td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+        <section id="contact" class="section-box">
+
+            <h2 class="section-title">تواصل معي</h2>
+
+            
+
+            <form action="https://formspree.io/f/xzzynpld" method="POST" id="contact-form">
+
+                
+
+                <label for="name">الاسم:</label>
+
+                <input type="text" id="name" name="الاسم" required>
+                
+               
+
+                <label for="email">البريد الإلكتروني:</label>
+
+                <input type="email" id="email" name="البريد_الإلكتروني" required>
+
+                <label for="message">الرسالة:</label>
+
+                <textarea id="message" name="الرسالة" rows="4" required></textarea>
+
+                <button type="submit" class="submit-button">إرسال</button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+
+        <p>  المشروع HTML5 النهائي</p>
+<p>  تحت أشراف الدرب/هشام الهمداني رقم التواصل مع المدرب:774276330</p>
+<p>إعدادالطالب:أحمد ناصر سالم بافقير.</p>
+       
+    </footer>
+
+</body>
+
+</html>
+
