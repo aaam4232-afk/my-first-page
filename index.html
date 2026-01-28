@@ -1,396 +1,223 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>موقعي الشخصي - مشروع HTML5 النهائي</title>
-
+    <title>لوحة تحكم سوق عزان الشاملة 🔐</title>
     
-
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-
-        /* استيراد الخط */
-
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
-
-        /* إعادة تعيين الأنماط الأساسية والخط */
-
-        * {
-
-            box-sizing: border-box;
-
-            margin: 0;
-
-            padding: 0;
-
-        }
-
-        body {
-
-            font-family: 'Tajawal', sans-serif;
-
-            background-color: #ffffff; 
-
-            color: hwb(0 0% 100%);
-
-            direction: rtl; 
-
-            text-align: right;
-
-        }
-
-        .container {
-
-            max-width: 800px;
-
-            margin: 20px auto;
-
-            padding: 0 15px;
-
-        }
-
-        /* * تنسيق رأس الصفحة (Header)
-
-         */
-
-        .main-header {
-
-            background-color: #ffb648; 
-
-            color: rgb(0, 0, 0);
-
-            padding: 20px 0;
-
-            text-align: center;
-
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-        }
-
-        .main-header h1 {
-
-            font-size: 1.8em;
-
-            margin-bottom: 10px;
-
-        }
-
-        .main-nav a {
-
-            color: rgb(0, 0, 0)
-
-            text-decoration: none;
-
-            padding: 0 15px;
-
-            font-weight: 700;
-
-            transition: color 0.3s;
-
-        }
-
-        .main-nav a:hover {
-
-            color: #000000;
-
-        }
-
-        /* * تنسيق الأقسام (Section Boxes)
-
-         */
-
-        .section-box {
-
-            background-color: rgb(235, 229, 228);
-
-            padding: 30px;
-
-            margin-bottom: 25px;
-
-            border-radius: 8px;
-
-            box-shadow: 0 2px 4px rgba(10, 2, 2, 0.05);
-
-        }
-
-        .section-title {
-
-            color: #000000; 
-
-            font-size: 1.5em;
-
-            border-bottom: 2px solid #eee;
-
-            padding-bottom: 10px;
-
-            margin-bottom: 20px;
-
-        }
-
-        /*
-
-         * تنسيق جدول المهارات
-
-         */
-
-        .table-container {
-
-            overflow-x: auto;
-
-        }
-
-        table {
-
-            width: 100%;
-
-            border-collapse: collapse;
-
-            text-align: right;
-
-        }
-
-        table th, table td {
-
-            border: 1px solid #ddd;
-
-            padding: 12px;
-
-        }
-
-        table th {
-
-            background-color: #f0f0f0;
-
-            color: #000000;
-
-            font-weight: 700;
-
-            width: 50%; 
-
-        }
-
-        /*
-
-         * تنسيق نموذج التواصل (Contact Form)
-
-         */
-
-        #contact-form label {
-
-            display: block;
-
-            margin-top: 15px;
-
-            margin-bottom: 5px;
-
-            font-weight: 700;
-
-        }
-
-        #contact-form input[type="text"],
-
-        #contact-form input[type="email"],
-
-        #contact-form textarea {
-
-            width: 100%;
-
-            padding: 10px;
-
-            margin-bottom: 10px;
-
-            border: 1px solid #e01313;
-
-            border-radius: 4px;
-
-            resize: vertical; 
-
-        }
-
-        .submit-button {
-
-            background-color: #eb6d07;
-
-            color: rgb(255, 255, 255);
-
-            padding: 12px 25px;
-
-            border: none;
-
-            border-radius: 4px;
-
-            cursor: pointer;
-
-            float: left; 
-
-            margin-top: 10px;
-
-            transition: background-color 0.3s;
-
-        }
-
-        .submit-button:hover {
-
-            background-color: #f73232;
-
-        }
-
-        /*
-
-         * تنسيق تذييل الصفحة (Footer)
-
-         */
-
-        .main-footer {
-
-            background-color: #fd9f13;
-
-            color: rgb(0, 0, 0);
-
-            text-align: center;
-
-            padding: 15px 0;
-
-            font-size: 0.9em;
-
-            clear: both; 
-
-        }
-
+        :root { --primary: #004d40; --orange: #ff6d00; --bg: #f0f4f7; --red: #d32f2f; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; padding: 20px; direction: rtl; }
+        .container { max-width: 600px; margin: auto; }
+        
+        /* شاشة الدخول */
+        #adminAuth { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .auth-card { background: white; padding: 30px; border-radius: 25px; text-align: center; width: 85%; max-width: 350px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+
+        /* الكروت */
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 5px solid var(--primary); position: relative; }
+        .contest-card { border-top-color: var(--orange); background: #fffcf0; }
+        
+        h2 { font-weight: 900; color: var(--primary); text-align: center; margin-top: 0; font-size: 1.4rem; }
+        label { font-weight: 700; display: block; margin-top: 15px; color: #555; font-size: 0.9rem; }
+        
+        input, select, textarea { width: 100%; padding: 14px; margin-top: 8px; border-radius: 12px; border: 1.5px solid #eee; font-family: 'Tajawal'; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus, textarea:focus { border-color: var(--primary); }
+
+        .btn-main { width: 100%; padding: 16px; margin-top: 15px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 1rem; }
+        .btn-main:active { transform: scale(0.96); }
+        .btn-orange { background: var(--orange); }
+
+        /* إدارة المحلات */
+        .store-item { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .store-info b { color: var(--primary); font-size: 1.1rem; }
+        .store-actions { display: flex; gap: 8px; margin-top: 8px; }
+        .btn-small { padding: 6px 12px; border-radius: 8px; border: none; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
+        .btn-del { background: #ffebee; color: var(--red); }
+        .btn-copy { background: #e8f5e9; color: #2e7d32; }
+
+        /* تنبيه النجاح */
+        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 12px 25px; border-radius: 50px; z-index: 10000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: 700; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
     </style>
-
-    </head>
-
+</head>
 <body>
 
-    <header class="main-header">
+<audio id="waterSnd"><source src="https://www.soundjay.com/nature/sounds/water-droplet-1.mp3"></audio>
 
-        <h1>مرحباً بكم في موقعي الشخصي</h1>
+<div id="toast">✅ تم التحديث بنجاح</div>
 
-        <nav class="main-nav">
+<div id="adminAuth">
+    <div class="auth-card">
+        <div style="font-size: 4rem; margin-bottom: 10px;">🔐</div>
+        <h3 style="margin: 0 0 20px;">دخول الإدارة العامة</h3>
+        <input type="password" id="adminPass" placeholder="أدخل الرمز السري">
+        <button class="btn-main" onclick="checkAuth()">دخول اللوحة</button>
+    </div>
+</div>
 
-            <a href="#about-me">من أنا</a>
+<div class="container" id="adminPanel" style="display:none;">
+    
+    <div class="card contest-card">
+        <h2 style="color: var(--orange);">🌙 التحكم بمسابقة رمضان</h2>
+        
+        <label>حالة المسابقة في الصفحة الرئيسية:</label>
+        <select id="cStatus" onchange="playWater()">
+            <option value="off">❌ إخفاء المسابقة (تعطيل)</option>
+            <option value="on">✅ إظهار المسابقة (تفعيل)</option>
+        </select>
 
-            <a href="#skills">المهارات</a>
+        <label>سؤال المسابقة:</label>
+        <textarea id="cQuestion" rows="3" placeholder="اكتب سؤال اليوم هنا..."></textarea>
+        
+        <label>حالة إعلان الفائز:</label>
+        <select id="winStatus" onchange="playWater()">
+            <option value="off">❌ مسطور (مخفي)</option>
+            <option value="on">✅ مفتوح (ظاهر)</option>
+        </select>
 
-            <a href="#contact">تواصل معي</a>
+        <label>اسم الفائز المحظوظ:</label>
+        <input type="text" id="cWinner" placeholder="اسم الفائز">
 
-        </nav>
+        <button class="btn-main btn-orange" onclick="saveContest()">تحديث المسابقة الآن 🚀</button>
+    </div>
 
-    </header>
+    <div class="card">
+        <h2>🏪 إضافة محل (تاجر) جديد</h2>
+        <input type="text" id="storeName" placeholder="اسم المحل">
+        <input type="text" id="storePhone" placeholder="رقم واتساب المحل">
+        <select id="storeCat">
+            <option value="مواد غذائية">مواد غذائية</option>
+            <option value="مطاعم وكفتيريا">مطاعم وكفتيريا</option>
+            <option value="مواد بناء وسباكة">مواد بناء وسباكة</option>
+            <option value="مواد كهرباء">مواد كهرباء</option>
+            <option value="سلع متنوعة وأخرى">سلع متنوعة وأخرى</option>
+        </select>
+        <button class="btn-main" onclick="addStore()">توليد كود التفعيل والنشر ✅</button>
+    </div>
 
-    <main class="container">
+    <div class="card">
+        <h2>📋 دليل المحلات والأكواد</h2>
+        <input type="text" id="search" placeholder="ابحث عن محل..." onkeyup="filterStores()">
+        <div id="storesList" style="margin-top: 20px;"></div>
+    </div>
 
-        <section id="about-me" class="section-box">
+</div>
 
-            <h2 class="section-title">من أنا ؟</h2>
+<script>
+    const ADMIN_KEY = "123456"; // رمز دخولك الخاص
+    const firebaseConfig = { databaseURL: "https://souq-tarim-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-            <p>أنا طالب أتعلم أساسيات تصميم صفحات الويب باستخدام HTML5. هذا المشروع النهائي يوضح ما تعلمته خلال الكورس.</p>
+    function playWater() { 
+        const s = document.getElementById('waterSnd');
+        s.currentTime = 0; s.play(); 
+    }
 
-        </section>
+    function showToast(msg, bg="#333") {
+        const t = document.getElementById('toast');
+        t.innerText = msg; t.style.background = bg;
+        t.style.top = "30px";
+        setTimeout(() => { t.style.top = "-100px"; }, 3000);
+    }
 
-        <section id="skills" class="section-box">
+    function checkAuth() {
+        if(document.getElementById('adminPass').value === ADMIN_KEY) {
+            playWater();
+            document.getElementById('adminAuth').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            syncData();
+        } else { alert("الرمز غير صحيح!"); }
+    }
 
-            <h2 class="section-title">المهارات</h2>
+    function syncData() {
+        db.ref('RamadanContest').on('value', snap => {
+            const d = snap.val();
+            if(d) {
+                document.getElementById('cStatus').value = d.status || 'off';
+                document.getElementById('cQuestion').value = d.question || '';
+                document.getElementById('cWinner').value = d.winner || '';
+                // جلب حالة إعلان الفائز
+                document.getElementById('winStatus').value = d.winStatus || 'off';
+            }
+        });
+        loadStores();
+    }
 
-            <div class="table-container">
+    function saveContest() {
+        playWater();
+        db.ref('RamadanContest').update({
+            status: document.getElementById('cStatus').value,
+            question: document.getElementById('cQuestion').value,
+            winner: document.getElementById('cWinner').value,
+            winStatus: document.getElementById('winStatus').value // حفظ الحالة الجديدة
+        }).then(() => showToast("🚀 تم تحديث المسابقة بنجاح", "var(--orange)"));
+    }
 
-                <table>
+    function addStore() {
+        const name = document.getElementById('storeName').value;
+        const phone = document.getElementById('storePhone').value;
+        const cat = document.getElementById('storeCat').value;
+        if(!name || !phone) return alert("أكمل البيانات");
 
-                    <thead>
+        playWater();
+        const code = "AZ-" + Math.floor(1000 + Math.random() * 9000);
+        db.ref('Stores/' + code).set({ name, phone, category: cat }).then(() => {
+            showToast("✅ تم إضافة المحل وتوليد الكود");
+            document.getElementById('storeName').value = "";
+            document.getElementById('storePhone').value = "";
+        });
+    }
 
-                        <tr>
-
-                            <th>المهارة</th>
-
-                            <th>المستوى</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        <tr>
-
-                            <td>HTML5</td>
-
-                            <td>جيد جداً</td>
-
-                        </tr>
-
-                        <tr>
-
-                            <td>CSS</td>
-
-                            <td>مبتدئ</td>
-
-                        </tr>
-
-                        <tr>
-
-                            <td>JavaScript</td>
-
-                            <td>قيد التعلم</td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </section>
-
-        <section id="contact" class="section-box">
-
-            <h2 class="section-title">تواصل معي</h2>
-
+    function loadStores() {
+        db.ref('Stores').on('value', snap => {
+            const list = document.getElementById('storesList');
+            list.innerHTML = "";
+            const data = snap.val();
+            if(!data) return list.innerHTML = "لا يوجد محلات حالياً";
             
+            Object.keys(data).forEach(id => {
+                list.innerHTML += `
+                    <div class="store-item" data-name="${data[id].name}">
+                        <div class="store-info">
+                            <b>${data[id].name}</b><br>
+                            <small>${data[id].category}</small>
+                            <div class="store-actions">
+                                <button class="btn-small btn-copy" onclick="copyCode('${id}')">نسخ كود الدخول</button>
+                                <button class="btn-small btn-del" onclick="deleteStore('${id}')">حذف</button>
+                            </div>
+                        </div>
+                        <div style="text-align:left; font-weight:900; color:var(--primary); font-family:monospace;">${id}</div>
+                    </div>`;
+            });
+        });
+    }
 
-            <form action="https://formspree.io/f/xzzynpld" method="POST" id="contact-form">
+    function copyCode(code) {
+        playWater();
+        navigator.clipboard.writeText(code);
+        showToast("📋 تم نسخ الكود: " + code);
+    }
 
-                
+    function deleteStore(id) {
+        if(confirm("هل أنت متأكد من حذف المحل؟ سيتم حذف جميع عروضه أيضاً!")) {
+            playWater();
+            db.ref('Stores/' + id).remove();
+            db.ref('Products/' + id).remove();
+            showToast("🗑️ تم حذف المحل");
+        }
+    }
 
-                <label for="name">الاسم:</label>
-
-                <input type="text" id="name" name="الاسم" required>
-                
-               
-
-                <label for="email">البريد الإلكتروني:</label>
-
-                <input type="email" id="email" name="البريد_الإلكتروني" required>
-
-                <label for="message">الرسالة:</label>
-
-                <textarea id="message" name="الرسالة" rows="4" required></textarea>
-
-                <button type="submit" class="submit-button">إرسال</button>
-
-            </form>
-
-        </section>
-
-    </main>
-
-    <footer class="main-footer">
-
-        <p>  المشروع HTML5 النهائي</p>
-<p>  تحت إشراف المدرب/هشام الهمداني رقم التواصل مع المدرب:774276330</p>
-<p>إعدادالطالب:أحمد ناصر سالم بافقير.</p>
-       
-    </footer>
-
+    function filterStores() {
+        const val = document.getElementById('search').value.toLowerCase();
+        document.querySelectorAll('.store-item').forEach(item => {
+            item.style.display = item.dataset.name.toLowerCase().includes(val) ? "flex" : "none";
+        });
+    }
+</script>
 </body>
-
 </html>
-
