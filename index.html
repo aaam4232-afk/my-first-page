@@ -1,161 +1,249 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سوق عزان الموحد 🛒</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    
+
     <style>
         :root { --primary: #004d40; --orange: #ff6d00; --bg: #f4f7f6; --white: #ffffff; }
-        body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; overflow-x: hidden; }
-        .header { background: linear-gradient(135deg, var(--primary), #00796b); color: white; padding: 35px 20px 55px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
-        .header h1 { margin: 0; font-size: 1.8rem; font-weight: 900; }
-        .refresh-btn { position: absolute; top: 5px; right: 15px; background: #ffffff; border: none; color: var(--primary); padding: 8px 15px; border-radius: 10px; font-size: 0.8rem; cursor: pointer; font-family: 'Tajawal'; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 1000; }
-        .main-content { padding: 0 15px; margin-top: -30px; position: relative; z-index: 10; }
-        .section-card { background: var(--white); border-radius: 20px; padding: 18px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
         
-        .winner-box-fixed { 
-            background: #fff9c4; 
-            padding: 10px; 
-            border-radius: 15px; 
-            margin-bottom: 15px; 
-            border: 2px solid #f1c40f; 
-            text-align: center; 
-            font-weight: 800; 
-            color: #d35400; 
-            font-size: 1rem;
-            display: none; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
+        /* تصميم مخصص للابتوب لضمان عدم ظهور الصفحة كـ PDF */
+        .container { max-width: 850px; margin: 0 auto; background: white; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        
+        .header { background: linear-gradient(135deg, var(--primary), #00796b); color: white; padding: 45px 20px; text-align: center; border-radius: 0 0 40px 40px; }
+        .header h1 { margin: 0; font-size: 2.2rem; font-weight: 900; }
 
-        #ramadanSection { border: 2.5px solid var(--orange); background: #fffcf0; display: none; padding: 12px; }
-        .q-text { font-weight: 700; font-size: 1.1rem; color: #222; margin: 8px 0; line-height: 1.4; }
-        .title-label { font-weight: 800; font-size: 1rem; margin-bottom: 15px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-        .grid-small { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .offer-box { background: #fff; border: 1px solid #eee; border-radius: 18px; padding: 18px; text-align: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-        .status-tag { font-size: 0.7rem; font-weight: 800; padding: 3px 10px; border-radius: 8px; margin-top: 5px; display: inline-block; }
-        .has { color: #2e7d32; background: #e8f5e9; }
-        .none { color: #9e9e9e; background: #f5f5f5; }
-        .directory-list { display: flex; overflow-x: auto; gap: 10px; padding: 5px 0 15px; scrollbar-width: none; }
-        .dir-pill { background: var(--primary); color: white; padding: 12px 22px; border-radius: 30px; font-size: 0.9rem; font-weight: 700; white-space: nowrap; cursor: pointer; border: none; }
-        .merchant-btn-style { width: 100%; padding: 18px; border-radius: 18px; border: none; background: var(--primary); color: white; font-family: 'Tajawal'; font-weight: 800; cursor: pointer; margin-top: -15px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .full-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 5000; overflow-y: auto; }
-        .top-nav { background: white; padding: 15px; display: flex; align-items: center; gap: 15px; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .back-btn { background: #f0f0f0; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; }
-        .m-input { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 14px; border: 1.5px solid #ddd; font-family: 'Tajawal'; font-size: 1rem; box-sizing: border-box; }
-        .m-btn { width: 100%; padding: 18px; border-radius: 14px; border: none; background: var(--primary); color: white; font-weight: 800; font-size: 1.1rem; cursor: pointer; }
-        #statusToast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); padding: 16px 35px; border-radius: 50px; color: white; font-weight: 800; z-index: 10000; transition: 0.5s; }
-        .product-card { background: white; margin: 12px 15px; padding: 18px; border-radius: 20px; border-right: 6px solid #ddd; box-shadow: 0 3px 12px rgba(0,0,0,0.04); }
-        .is-offer { border-right-color: var(--orange); background: #fffcf5; }
+        .main-content { padding: 0 20px; margin-top: -30px; }
+        .section-card { background: var(--white); border-radius: 25px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); margin-bottom: 25px; border: 1px solid #f0f0f0; }
+
+        /* ميزة مسابقة رمضان المطورة */
+        #ramadanSection { border: 3px solid var(--orange); background: #fffcf0; display: none; }
+        .winner-tag { background: #fff9c4; color: #d35400; padding: 10px; border-radius: 12px; font-weight: 800; margin-bottom: 15px; border: 1px dashed var(--orange); text-align: center; }
+
+        /* شبكة العروض الاحترافية */
+        .grid-offers { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; }
+        .offer-box { background: #fff; border: 2px solid #f8f8f8; border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; }
+        .offer-box:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .status-badge { font-size: 0.75rem; font-weight: 800; padding: 5px 12px; border-radius: 10px; margin-top: 10px; display: inline-block; }
+        .has { background: #e8f5e9; color: #2e7d32; }
+        .none { background: #fafafa; color: #9e9e9e; }
+
+        /* دليل المحلات المنزلق */
+        .dir-scroll { display: flex; overflow-x: auto; gap: 12px; padding: 10px 0; scrollbar-width: none; }
+        .dir-item { background: var(--primary); color: white; padding: 15px 25px; border-radius: 50px; font-weight: 700; white-space: nowrap; cursor: pointer; border: none; }
+
+        /* ميزة الصفحات الكاملة (Popups) */
+        .full-page { display: none; position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 850px; height: 100%; background: var(--bg); z-index: 9999; overflow-y: auto; }
+        .nav-bar { background: white; padding: 15px 20px; display: flex; align-items: center; gap: 20px; sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .back-btn { font-size: 1.5rem; cursor: pointer; border: none; background: none; }
+
+        /* مدخلات التاجر والمستخدم */
+        input, select { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 15px; border: 1.5px solid #eee; font-family: 'Tajawal'; font-size: 1rem; box-sizing: border-box; }
+        .main-btn { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--primary); color: white; font-weight: 800; font-size: 1.1rem; cursor: pointer; }
+
+        /* صوت الماء الافتراضي (عند الضغط) */
+        .water-effect:active { transform: scale(0.97); }
     </style>
 </head>
 <body>
 
-    <audio id="waterSnd" preload="auto"><source src="https://www.soundjay.com/nature/sounds/water-droplet-1.mp3"></audio>
-    <div id="statusToast"></div>
+    <audio id="clickSound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg">
+    </audio>
 
-    <div class="header">
-        <button class="refresh-btn" onclick="location.reload()">🔄 تحديث</button>
-        <h1>سوق عزان الموحد 🛒</h1>
-        <p>عروض المحلات والمسابقات في مكان واحد</p>
-    </div>
-
-    <div class="main-content">
-        <div id="winnerDiv" class="winner-box-fixed">🏆 الفائز: <span id="wName"></span></div>
-
-        <div id="ramadanSection" class="section-card">
-            <div class="title-label" style="color: var(--orange);">🌙 مسابقة رمضان اليومية</div>
-            <p id="qDisplay" class="q-text">جاري تحميل السؤال...</p>
-            <input type="text" id="userName" class="m-input" placeholder="اسمك الثلاثي" style="padding:12px; margin-bottom:8px;">
-            <input type="text" id="userAns" class="m-input" placeholder="إجابتك هنا..." style="padding:12px; margin-bottom:8px;">
-            <button onclick="sendAns()" class="m-btn" style="background: #25D366; padding:14px; font-size:1rem;">إرسال للواتساب ✅</button>
+    <div class="container">
+        <div class="header">
+            <h1>سوق عزان الموحد 🛒</h1>
+            <p>جميع عروض المدينة في جيبك</p>
         </div>
 
-        <div class="section-card">
-            <div class="title-label">🔥 عروض وتخفيضات اليوم</div>
-            <div class="grid-small">
-                <div class="offer-box" onclick="openGlobalOffers('مطاعم وكفتيريا', '🍔')"><span>🍔</span><b>المطاعم</b><span id="st-مطاعم وكفتيريا" class="status-tag none">...</span></div>
-                <div class="offer-box" onclick="openGlobalOffers('مواد غذائية', '🍎')"><span>🍎</span><b>الغذاء</b><span id="st-مواد غذائية" class="status-tag none">...</span></div>
-                <div class="offer-box" onclick="openGlobalOffers('مواد بناء وسباكة', '🏗️')"><span>🏗️</span><b>البناء</b><span id="st-مواد بناء وسباكة" class="status-tag none">...</span></div>
-                <div class="offer-box" onclick="openGlobalOffers('مواد كهرباء', '⚡')"><span>⚡</span><b>الكهرباء</b><span id="st-مواد كهرباء" class="status-tag none">...</span></div>
-                <div class="offer-box" onclick="openGlobalOffers('سلع متنوعة وأخرى', '🛒')" style="grid-column: span 2;"><span>🛒</span><b>عروض السلع الأخرى</b><span id="st-سلع متنوعة وأخرى" class="status-tag none">...</span></div>
+        <div class="main-content">
+            <div id="ramadanSection" class="section-card">
+                <div style="color: var(--orange); font-weight: 900; font-size: 1.2rem; margin-bottom: 10px;">🌙 مسابقة سوق عزان</div>
+                <div id="winnerDiv" class="winner-tag" style="display:none;">🏆 الفائز اليوم: <span id="wName"></span></div>
+                <p id="qDisplay" style="font-weight: 700; line-height: 1.6;"></p>
+                <input type="text" id="userName" placeholder="اكتب اسمك الثلاثي">
+                <input type="text" id="userAns" placeholder="اكتب إجابتك هنا">
+                <button onclick="sendWhatsApp()" class="main-btn" style="background: #25D366;">إرسال الحل عبر واتساب ✅</button>
             </div>
-        </div>
 
-        <div class="section-card" style="background:transparent; box-shadow:none; padding:0;">
-            <div class="title-label">📂 دليل محلات عزان</div>
-            <div class="directory-list">
-                <div class="dir-pill" onclick="openFullDirectory('مطاعم وكفتيريا')">🏘️ المطاعم</div>
-                <div class="dir-pill" onclick="openFullDirectory('مواد غذائية')">🍱 البقالات</div>
-                <div class="dir-pill" onclick="openFullDirectory('مواد بناء وسباكة')">🛠️ البناء</div>
-                <div class="dir-pill" onclick="openFullDirectory('مواد كهرباء')">💡 الكهرباء</div>
-                <div class="dir-pill" onclick="openFullDirectory('سلع متنوعة وأخرى')">🏷️ أخرى</div>
+            <div class="section-card">
+                <div style="font-weight: 900; font-size: 1.2rem; margin-bottom: 20px; color: var(--primary);">🔥 أقوى العروض الحالية</div>
+                <div class="grid-offers">
+                    <div class="offer-box water-effect" onclick="openOffers('مطاعم وكفتيريا', '🍔')">
+                        <span style="font-size: 2rem;">🍔</span><br><b>المطاعم</b><br>
+                        <span id="st-مطاعم وكفتيريا" class="status-badge none">جاري الفحص..</span>
+                    </div>
+                    <div class="offer-box water-effect" onclick="openOffers('مواد غذائية', '🍎')">
+                        <span style="font-size: 2rem;">🍎</span><br><b>الغذاء</b><br>
+                        <span id="st-مواد غذائية" class="status-badge none">جاري الفحص..</span>
+                    </div>
+                    <div class="offer-box water-effect" onclick="openOffers('مواد بناء وسباكة', '🏗️')">
+                        <span style="font-size: 2rem;">🏗️</span><br><b>البناء</b><br>
+                        <span id="st-مواد بناء وسباكة" class="status-badge none">جاري الفحص..</span>
+                    </div>
+                    <div class="offer-box water-effect" onclick="openOffers('مواد كهرباء', '⚡')">
+                        <span style="font-size: 2rem;">⚡</span><br><b>الكهرباء</b><br>
+                        <span id="st-مواد كهرباء" class="status-badge none">جاري الفحص..</span>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <button onclick="openPage('merchantPage')" class="merchant-btn-style">🔐 لوحة تحكم المحلات</button>
+            <div class="section-card">
+                <div style="font-weight: 900; margin-bottom: 15px;">📂 دليل المحلات الشامل</div>
+                <div class="dir-scroll">
+                    <button class="dir-item water-effect" onclick="openDir('مطاعم وكفتيريا')">🏘️ المطاعم</button>
+                    <button class="dir-item water-effect" onclick="openDir('مواد غذائية')">🍱 البقالات</button>
+                    <button class="dir-item water-effect" onclick="openDir('مواد بناء وسباكة')">🛠️ البناء</button>
+                    <button class="dir-item water-effect" onclick="openDir('مواد كهرباء')">💡 الكهرباء</button>
+                </div>
+            </div>
+
+            <button onclick="openPage('merchantPage')" class="main-btn" style="background: #f0f0f0; color: #555; margin-bottom: 50px;">🔐 دخول التجار</button>
+        </div>
     </div>
 
     <div id="merchantPage" class="full-page">
-        <div class="top-nav"><button class="back-btn" onclick="closePage('merchantPage')">➜</button><h3>لوحة التاجر</h3></div>
-        <div id="mAuthArea" style="padding: 25px;"><input type="password" id="mCode" class="m-input" placeholder="أدخل الرمز السري لمحلك"><button class="m-btn" onclick="loginMerchant()">دخول</button></div>
-        <div id="mControlArea" style="display:none; padding: 25px;"><div id="storeNameDisp" style="padding:15px; background:var(--primary); color:white; border-radius:15px; margin-bottom:20px; font-weight:bold; text-align:center;"></div><input type="text" id="pName" class="m-input" placeholder="اسم السلعة"><input type="text" id="pPrice" class="m-input" placeholder="السعر"><select id="pType" class="m-input"><option value="offer">🔥 عرض وتخفيض</option><option value="normal">📦 بضاعة عادية</option></select><button class="m-btn" onclick="addProduct()">نشر الآن ✅</button><div id="mMyProds" style="margin-top:25px;"></div><button onclick="logoutMerchant()" style="color:red; background:none; border:none; width:100%; margin-top:30px; cursor:pointer; font-weight:900;">تسجيل الخروج</button></div>
+        <div class="nav-bar"><button class="back-btn" onclick="closePage('merchantPage')">➜</button><h3>لوحة التحكم</h3></div>
+        <div id="loginArea" style="padding: 30px;">
+            <input type="password" id="mCode" placeholder="أدخل الرمز السري لمحلك">
+            <button class="main-btn" onclick="login()">دخول المحل</button>
+        </div>
+        <div id="controlArea" style="display:none; padding: 20px;">
+            <div id="mTitle" style="text-align:center; font-weight:900; color:var(--primary); margin-bottom:20px;"></div>
+            <input type="text" id="pName" placeholder="اسم السلعة / العرض">
+            <input type="text" id="pPrice" placeholder="السعر">
+            <select id="pType"><option value="offer">🔥 نشر كعرض خاص</option><option value="normal">📦 بضاعة عادية</option></select>
+            <button class="main-btn" onclick="addProd()">نشر الآن ✅</button>
+            <div id="myProds" style="margin-top:30px;"></div>
+        </div>
     </div>
-    <div id="offersPage" class="full-page"><div class="top-nav"><button class="back-btn" onclick="closePage('offersPage')">➜</button><h3 id="pgTitle"></h3></div><div id="offersList"></div></div>
-    <div id="directoryPage" class="full-page"><div class="top-nav"><button class="back-btn" onclick="closePage('directoryPage')">➜</button><h3 id="dirTitle"></h3></div><div id="dirStoresList"></div></div>
-    <div id="storeViewPage" class="full-page"><div class="top-nav"><button class="back-btn" onclick="closePage('storeViewPage')">➜</button><h3 id="svTitle"></h3></div><div id="svProducts"></div></div>
+
+    <div id="offersPage" class="full-page"><div class="nav-bar"><button class="back-btn" onclick="closePage('offersPage')">➜</button><h3 id="offerTitle"></h3></div><div id="listOffers"></div></div>
+    <div id="dirPage" class="full-page"><div class="nav-bar"><button class="back-btn" onclick="closePage('dirPage')">➜</button><h3 id="dirTitle"></h3></div><div id="listStores"></div></div>
 
     <script>
         const firebaseConfig = { databaseURL: "https://souq-tarim-default-rtdb.firebaseio.com/" };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        function playWater() { const snd = document.getElementById('waterSnd'); snd.currentTime = 0; snd.play().catch(e => {}); }
-        function showMsg(msg, isSuccess) { const t = document.getElementById('statusToast'); t.innerText = msg; t.style.background = isSuccess ? "#2ecc71" : "#e74c3c"; t.style.top = "20px"; setTimeout(() => t.style.top = "-100px", 3000); }
-        function openPage(id) { playWater(); document.getElementById(id).style.display='block'; if(id==='merchantPage') checkAuth(); }
-        function closePage(id) { playWater(); document.getElementById(id).style.display='none'; }
+        // ميزة صوت الماء عند الضغط
+        function playWater() { const s = document.getElementById('clickSound'); s.currentTime = 0; s.play().catch(()=>{}); }
+        document.querySelectorAll('.water-effect').forEach(b => b.addEventListener('click', playWater));
 
-        // مراقبة المسابقة والفائز
+        function openPage(id) { playWater(); document.getElementById(id).style.display='block'; }
+        function closePage(id) { document.getElementById(id).style.display='none'; }
+
+        // مزامنة المسابقة
         db.ref('RamadanContest').on('value', snap => {
             const d = snap.val();
             if(d) {
-                // التحكم في قسم المسابقة
                 document.getElementById('ramadanSection').style.display = (d.status === 'on') ? 'block' : 'none';
                 document.getElementById('qDisplay').innerText = d.question || "";
-                
-                // التحكم في إعلان الفائز (الربط مع winStatus)
-                const winBox = document.getElementById('winnerDiv');
-                if(d.winStatus === 'on' && d.winner && d.winner.trim() !== "") {
-                    winBox.style.display = 'block';
-                    document.getElementById('wName').innerText = d.winner;
-                } else {
-                    winBox.style.display = 'none';
-                }
+                document.getElementById('winnerDiv').style.display = (d.winStatus === 'on') ? 'block' : 'none';
+                document.getElementById('wName').innerText = d.winner || "";
             }
         });
 
-        // باقي الوظائف (كما هي في كودك الأصلي تماماً)
-        function sendAns() {
-            const name = document.getElementById('userName').value;
-            const ans = document.getElementById('userAns').value;
-            if(name.trim() !== "" && ans.trim() !== "") { playWater(); window.open(https://wa.me/967776337604?text=${encodeURIComponent('الاسم: '+name+'\nحل المسابقة: '+ans)}, '_blank'); } else { showMsg("⚠️ أكمل البيانات", false); }
+        // مزامنة حالة العروض (✅ يوجد عروض)
+        function checkOffers() {
+            db.ref('Products').on('value', pSnap => {
+                const allP = pSnap.val() || {};
+                db.ref('Stores').once('value', sSnap => {
+                    const stores = sSnap.val() || {};
+                    const cats = ['مواد غذائية', 'مطاعم وكفتيريا', 'مواد بناء وسباكة', 'مواد كهرباء'];
+                    cats.forEach(c => {
+                        let hasOffer = false;
+                        Object.keys(stores).forEach(id => {
+                            if(stores[id].category === c && allP[id]) {
+                                Object.values(allP[id]).forEach(p => { if(p.type === 'offer') hasOffer = true; });
+                            }
+                        });
+                        const el = document.getElementById('st-'+c);
+                        if(el) {
+                            el.innerText = hasOffer ? "✅ يوجد عروض" : "لا يوجد عروض";
+                            el.className = "status-badge " + (hasOffer ? "has" : "none");
+                        }
+                    });
+                });
+            });
         }
-        function loginMerchant() { const code = document.getElementById('mCode').value; db.ref('Stores/' + code).once('value', s => { if(s.exists()){ localStorage.setItem('azKey', code); localStorage.setItem('azName', s.val().name); showMerchantUI(); playWater(); } else alert("الرمز خطأ!"); }); }
-        function checkAuth() { if(localStorage.getItem('azKey')) showMerchantUI(); }
-        function showMerchantUI() { document.getElementById('mAuthArea').style.display = 'none'; document.getElementById('mControlArea').style.display = 'block'; document.getElementById('storeNameDisp').innerText = "🏪 متجر: " + localStorage.getItem('azName'); loadMyProducts(); }
-        function addProduct() { const key = localStorage.getItem('azKey'); const name = document.getElementById('pName').value; const price = document.getElementById('pPrice').value; if(!name || !price) return; db.ref('Products/' + key).push({ name, price, type: document.getElementById('pType').value }).then(() => { showMsg("✅ تم النشر", true); document.getElementById('pName').value=""; document.getElementById('pPrice').value=""; }); }
-        function loadMyProducts() { db.ref('Products/' + localStorage.getItem('azKey')).on('value', snap => { const list = document.getElementById('mMyProds'); list.innerHTML = ""; snap.forEach(p => { list.innerHTML += <div class="my-prod-card" style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;"><span><b>${p.val().name}</b></span><button onclick="deleteProd('${p.key}')" style="color:red; border:none; background:none; font-weight:bold; cursor:pointer;">حذف</button></div>; }); }); }
-        function deleteProd(pid) { if(confirm("حذف؟")) db.ref('Products/' + localStorage.getItem('azKey') + '/' + pid).remove(); }
-        function logoutMerchant() { localStorage.clear(); location.reload(); }
-        function syncStatus() { db.ref('Products').on('value', pSnap => { const products = pSnap.val() || {}; db.ref('Stores').once('value', sSnap => { const stores = sSnap.val() || {}; const cats = ['مواد غذائية', 'مطاعم وكفتيريا', 'مواد بناء وسباكة', 'مواد كهرباء', 'سلع متنوعة وأخرى']; cats.forEach(c => { let hasOffer = false; Object.keys(stores).forEach(sid => { if(stores[sid].category === c && products[sid]) { Object.values(products[sid]).forEach(p => { if(p.type === 'offer') hasOffer = true; }); } }); const el = document.getElementById('st-'+c); if(el) { if(hasOffer) { el.innerText = "✅ يوجد عروض"; el.className = "status-tag has"; } else { el.innerText = "لا يوجد عروض حالياً"; el.className = "status-tag none"; } } }); }); }); }
-        syncStatus();
-        function openGlobalOffers(cat, icon) { playWater(); document.getElementById('pgTitle').innerText = icon + " عروض " + cat; const list = document.getElementById('offersList'); list.innerHTML = "<p style='text-align:center; padding:20px;'>جاري البحث عن عروض...</p>"; openPage('offersPage'); db.ref('Stores').orderByChild('category').equalTo(cat).once('value', sSnap => { const stores = sSnap.val() || {}; db.ref('Products').once('value', pSnap => { list.innerHTML = ""; const allP = pSnap.val() || {}; let found = false; Object.keys(stores).forEach(sid => { if(allP[sid]) Object.values(allP[sid]).forEach(p => { if(p.type==='offer') { found = true; list.innerHTML += <div class="product-card is-offer"><b>${p.name}</b> <span style="float:left; color:var(--orange); font-weight:900;">${p.price}</span><br><small>🏪 ${stores[sid].name}</small></div>; } }); }); if(!found) list.innerHTML = "<p style='text-align:center; padding:50px; color:#999;'>لا توجد عروض حالياً في هذا القسم</p>"; }); }); }
-        function openFullDirectory(cat) { playWater(); document.getElementById('dirTitle').innerText = "دليل " + cat; const list = document.getElementById('dirStoresList'); list.innerHTML = ""; openPage('directoryPage'); db.ref('Stores').orderByChild('category').equalTo(cat).once('value', snap => { snap.forEach(s => { list.innerHTML += <div class="product-card" onclick="viewStore('${s.key}', '${s.val().name}', '${s.val().phone}')"><b>${s.val().name}</b><br><small>عرض المنتجات ➜</small></div>; }); }); }
-        function viewStore(id, name, phone) { playWater(); document.getElementById('svTitle').innerText = name; const list = document.getElementById('svProducts'); list.innerHTML = ""; openPage('storeViewPage'); db.ref('Products/' + id).once('value', snap => { snap.forEach(p => { list.innerHTML += <div class="product-card"><b>${p.val().name}</b><br>السعر: ${p.val().price}</div>; }); list.innerHTML += <div style="text-align:center; padding:20px;"><a href="tel:${phone}" class="m-btn" style="text-decoration:none; background:#2ecc71; display:block;">📞 اتصل بالمحل</a></div>; }); }
+        checkOffers();
+
+        // وظائف المحلات والبحث
+        function login() {
+            const code = document.getElementById('mCode').value;
+            db.ref('Stores/'+code).once('value', s => {
+                if(s.exists()) {
+                    localStorage.setItem('sId', code);
+                    localStorage.setItem('sName', s.val().name);
+                    showControl();
+                } else alert("الرمز غير صحيح");
+            });
+        }
+
+        function showControl() {
+            document.getElementById('loginArea').style.display='none';
+            document.getElementById('controlArea').style.display='block';
+            document.getElementById('mTitle').innerText = "مرحباً: " + localStorage.getItem('sName');
+            loadMyProds();
+        }
+
+        function addProd() {
+            const id = localStorage.getItem('sId');
+            db.ref('Products/'+id).push({
+                name: document.getElementById('pName').value,
+                price: document.getElementById('pPrice').value,
+                type: document.getElementById('pType').value
+            }).then(() => { alert("تم النشر"); document.getElementById('pName').value=""; });
+        }
+
+        function loadMyProds() {
+            db.ref('Products/'+localStorage.getItem('sId')).on('value', snap => {
+                const div = document.getElementById('myProds');
+                div.innerHTML = "<h4>منتجاتك المنشورة:</h4>";
+                snap.forEach(p => {
+                    div.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
+                        <span>${p.val().name}</span>
+                        <button onclick="delP('${p.key}')" style="color:red; border:none; background:none;">حذف</button>
+                    </div>`;
+                });
+            });
+        }
+        function delP(pid) { db.ref('Products/'+localStorage.getItem('sId')+'/'+pid).remove(); }
+
+        // عرض العروض والدليل للناس
+        function openOffers(cat, icon) {
+            document.getElementById('offerTitle').innerText = icon + " عروض " + cat;
+            const list = document.getElementById('listOffers');
+            list.innerHTML = "<p style='text-align:center;'>جاري التحميل...</p>";
+            openPage('offersPage');
+            db.ref('Stores').orderByChild('category').equalTo(cat).once('value', sSnap => {
+                const stores = sSnap.val() || {};
+                db.ref('Products').once('value', pSnap => {
+                    const allP = pSnap.val() || {};
+                    list.innerHTML = "";
+                    Object.keys(stores).forEach(sid => {
+                        if(allP[sid]) Object.values(allP[sid]).forEach(p => {
+                            if(p.type==='offer') list.innerHTML += <div class="section-card" style="border-right:5px solid var(--orange)"><b>${p.name}</b> <span style="float:left; color:var(--orange)">${p.price}</span><br><small>🏪 ${stores[sid].name}</small></div>;
+                        });
+                    });
+                });
+            });
+        }
+
+        function sendWhatsApp() {
+            const n = document.getElementById('userName').value;
+            const a = document.getElementById('userAns').value;
+            if(n && a) window.open(https://wa.me/967776337604?text=${encodeURIComponent('الاسم: '+n+'\nالحل: '+a)});
+        }
     </script>
 </body>
 </html>
