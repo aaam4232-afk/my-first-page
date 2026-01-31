@@ -3,123 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سوق عزان الموحد 🛒</title>
+    <title>سوق عزان المطور 🛒</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        :root { --primary: #004d40; --orange: #ff6d00; --bg: #f4f7f6; }
-        body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background: white; min-height: 100vh; }
-        .header { background: linear-gradient(135deg, var(--primary), #00796b); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; }
-        .main-content { padding: 0 15px; margin-top: -30px; }
-        .section-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 20px; border: 1px solid #eee; }
+        :root { --primary: #00695c; --accent: #00bfa5; --bg: #e0f2f1; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        /* ميزة أصوات الماء (تأثير بصري عند الضغط) */
-        .water-btn:active { transform: scale(0.95); transition: 0.1s; }
-        
-        /* شبكة العروض */
-        .grid-small { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
-        .offer-box { background: #fff; border: 1px solid #eee; border-radius: 18px; padding: 15px; text-align: center; cursor: pointer; }
-        .status-tag { font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; margin-top: 8px; display: inline-block; }
-        .has { color: #2e7d32; background: #e8f5e9; }
-        .none { color: #757575; background: #f5f5f5; }
+        /* تصميم الهيدر (نمط الهوتسبوت) */
+        .header { background: var(--primary); color: white; width: 100%; padding: 40px 0; text-align: center; border-radius: 0 0 50px 50px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 2rem; font-weight: 900; letter-spacing: 1px; }
 
-        /* الأزرار والدليل */
-        .dir-pill { background: var(--primary); color: white; padding: 12px 20px; border-radius: 30px; font-weight: 700; cursor: pointer; border: none; display: inline-block; margin: 5px; }
-        .full-page { display: none; position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 800px; height: 100%; background: var(--bg); z-index: 5000; overflow-y: auto; }
-        .top-nav { background: white; padding: 15px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #eee; }
+        /* حاوية الأزرار */
+        .container { width: 90%; max-width: 500px; padding: 10px; }
+        
+        /* زر الماء المطور */
+        .btn-water { 
+            background: white; color: var(--primary); padding: 22px; border-radius: 25px; 
+            border: none; font-weight: 900; width: 100%; font-size: 1.4rem; 
+            cursor: pointer; margin-bottom: 20px; position: relative; overflow: hidden;
+            transition: 0.3s; box-shadow: 0 6px 12px rgba(0,0,0,0.08); display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* تأثير مائي عند الضغط */
+        .btn-water:active { transform: scale(0.95); background: #b2dfdb; }
+        
+        .status-badge { font-size: 0.8rem; font-weight: 400; margin-top: 5px; padding: 4px 12px; border-radius: 12px; background: #f5f5f5; color: #757575; }
+        .online { background: #c8e6c9 !important; color: #2e7d32 !important; font-weight: 700; }
     </style>
 </head>
 <body>
 
-    <audio id="waterSound" src="https://www.soundjay.com/nature/sounds/water-droplet-1.mp3"></audio>
+    <audio id="waterDrop" src="https://www.soundjay.com/nature/sounds/water-droplet-1.mp3" preload="auto"></audio>
+
+    <div class="header">
+        <h1>سوق عزان الموحد 🛒</h1>
+    </div>
 
     <div class="container">
-        <div class="header">
-            <h1 style="margin:0;">سوق عزان الموحد 🛒</h1>
-            <p>جميع عروض المدينة في مكان واحد</p>
-        </div>
+        <button class="btn-water" onclick="playWaterEffect()">
+            🍔 قسم المطاعم
+            <span id="st-1" class="status-badge">جاري الفحص...</span>
+        </button>
 
-        <div class="main-content">
-            <div id="ramadanSection" class="section-card" style="display:none; border: 2px solid var(--orange);">
-                <h3 style="color:var(--orange);">🌙 مسابقة رمضان اليومية</h3>
-                <p id="qDisplay" style="font-weight:bold;"></p>
-                <button onclick="playWater();" class="dir-pill" style="background:var(--orange); width:100%;">شارك الآن عبر واتساب</button>
-            </div>
+        <button class="btn-water" onclick="playWaterEffect()">
+            🍎 قسم البقالات
+            <span id="st-2" class="status-badge">جاري الفحص...</span>
+        </button>
 
-            <div class="section-card">
-                <div style="font-weight:900; margin-bottom:15px; color:var(--primary);">🔥 عروض وتخفيضات اليوم</div>
-                <div class="grid-small">
-                    <div class="offer-box water-btn" onclick="playWater()"><span>🍔</span><br><b>المطاعم</b><br><span id="st-مطاعم وكفتيريا" class="status-tag none">لا يوجد عروض</span></div>
-                    <div class="offer-box water-btn" onclick="playWater()"><span>🍎</span><br><b>الغذاء</b><br><span id="st-مواد غذائية" class="status-tag none">لا يوجد عروض</span></div>
-                    <div class="offer-box water-btn" onclick="playWater()"><span>🏗️</span><br><b>البناء</b><br><span id="st-مواد بناء وسباكة" class="status-tag none">لا يوجد عروض</span></div>
-                    <div class="offer-box water-btn" onclick="playWater()"><span>⚡</span><br><b>الكهرباء</b><br><span id="st-مواد كهرباء" class="status-tag none">لا يوجد عروض</span></div>
-                </div>
-            </div>
-
-            <div class="section-card">
-                <div style="font-weight:900; margin-bottom:10px;">📂 دليل المحلات</div>
-                <div style="overflow-x:auto; white-space:nowrap;">
-                    <div class="dir-pill water-btn" onclick="playWater()">🏘️ المطاعم</div>
-                    <div class="dir-pill water-btn" onclick="playWater()">🍱 البقالات</div>
-                    <div class="dir-pill water-btn" onclick="playWater()">🛠️ البناء</div>
-                </div>
-            </div>
-
-            <button onclick="playWater()" class="dir-pill" style="width:100%; background:#eee; color:#555; margin-top:20px;">🔐 لوحة تحكم المحلات</button>
+        <div id="contestBox" style="display:none; background: #fff; padding: 20px; border-radius: 20px; border-top: 5px solid #ff6d00; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <h3 style="color:#ff6d00; margin:0;">🌙 مسابقة رمضان</h3>
+            <p id="qText" style="font-weight:900; color:#333; font-size: 1.2rem;"></p>
         </div>
     </div>
 
     <script>
-        // إعدادات Firebase الخاصة بك
+        // إعدادات الربط المباشر بمشروعك
         const firebaseConfig = { databaseURL: "https://souq-tarim-default-rtdb.firebaseio.com/" };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // وظيفة صوت الماء عند الضغط
-        function playWater() {
-            const audio = document.getElementById('waterSound');
-            audio.currentTime = 0;
-            audio.play();
+        // وظيفة صوت الماء المطور
+        function playWaterEffect() {
+            const audio = document.getElementById('waterDrop');
+            audio.currentTime = 0; // يصفر الوقت ليعمل الصوت فوراً عند كل ضغطة
+            audio.play().catch(e => console.log("تحتاج للنقر أولاً"));
         }
 
-        // مزامنة البيانات والتحقق من العروض
-        function startSync() {
-            db.ref('Products').on('value', pSnap => {
-                const allProducts = pSnap.val() || {};
-                const categories = ['مطاعم وكفتيريا', 'مواد غذائية', 'مواد بناء وسباكة', 'مواد كهرباء'];
-                
-                categories.forEach(cat => {
-                    let hasOffer = false;
-                    // فحص إذا كان هناك منتج نوعه 'offer' في هذا القسم
-                    Object.keys(allProducts).forEach(storeId => {
-                        Object.values(allProducts[storeId]).forEach(p => {
-                            if(p.type === 'offer') hasOffer = true;
-                        });
-                    });
-
-                    const tag = document.getElementById('st-' + cat);
-                    if(tag) {
-                        tag.innerText = hasOffer ? "✅ يوجد عروض" : "لا يوجد عروض";
-                        tag.className = "status-tag " + (hasOffer ? "has" : "none");
-                    }
+        // مراقبة حالة الاتصال والبيانات
+        db.ref('.info/connected').on('value', (snap) => {
+            if (snap.val() === true) {
+                document.querySelectorAll('.status-badge').forEach(el => {
+                    el.innerText = "● متصل الآن";
+                    el.classList.add('online');
                 });
-            });
+            }
+        });
 
-            // مزامنة المسابقة
-            db.ref('RamadanContest').on('value', snap => {
-                if(snap.val() && snap.val().status === 'on') {
-                    document.getElementById('ramadanSection').style.display = 'block';
-                    document.getElementById('qDisplay').innerText = snap.val().question;
-                }
-            });
-        }
-
-        window.onload = startSync;
+        // جلب المسابقة تلقائياً
+        db.ref('RamadanContest').on('value', (snap) => {
+            const data = snap.val();
+            if (data && data.status === 'on') {
+                document.getElementById('contestBox').style.display = 'block';
+                document.getElementById('qText').innerText = data.question;
+            }
+        });
     </script>
 </body>
 </html>
