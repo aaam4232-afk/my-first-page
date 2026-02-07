@@ -18,7 +18,6 @@
         :root { --primary: #004d40; --orange: #ff6d00; --bg: #f4f7f6; --white: #ffffff; }
         body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; overflow-x: hidden; }
         
-        /* تأثير الاهتزاز للمربعات الفارغة */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-7px); }
@@ -30,6 +29,7 @@
         .header { background: linear-gradient(135deg, var(--primary), #00796b); color: white; padding: 35px 20px 55px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
         .header h1 { margin: 0; font-size: 1.8rem; font-weight: 900; }
         .refresh-btn { position: absolute; top: 5px; right: 15px; background: #ffffff; border: none; color: var(--primary); padding: 8px 15px; border-radius: 10px; font-size: 0.8rem; cursor: pointer; font-family: 'Tajawal'; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 1000; }
+        
         .main-content { padding: 0 15px; margin-top: -30px; position: relative; z-index: 10; }
         .section-card { background: var(--white); border-radius: 20px; padding: 18px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 20px; }
         
@@ -38,16 +38,22 @@
         #statusToast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); padding: 16px 35px; border-radius: 50px; color: white; font-weight: 800; z-index: 10000; transition: 0.5s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         
         .grid-small { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .offer-box { background: #fff; border: 1px solid #eee; border-radius: 18px; padding: 18px; text-align: center; cursor: pointer; }
+        .offer-box { background: #fff; border: 1px solid #eee; border-radius: 18px; padding: 18px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .offer-box:active { transform: scale(0.95); }
+        
         .status-tag { font-size: 0.7rem; font-weight: 800; padding: 3px 10px; border-radius: 8px; margin-top: 5px; display: inline-block; }
         .has { color: #2e7d32; background: #e8f5e9; }
         .none { color: #9e9e9e; background: #f5f5f5; }
+
         .directory-list { display: flex; overflow-x: auto; gap: 10px; padding: 5px 0 15px; scrollbar-width: none; }
         .dir-pill { background: var(--primary); color: white; padding: 12px 22px; border-radius: 30px; font-size: 0.9rem; font-weight: 700; white-space: nowrap; cursor: pointer; border: none; }
+        
         .merchant-btn-style { width: 100%; padding: 18px; border-radius: 18px; border: none; background: var(--primary); color: white; font-family: 'Tajawal'; font-weight: 800; cursor: pointer; margin-top: -15px; margin-bottom: 20px; }
+        
         .full-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 5000; overflow-y: auto; }
         .top-nav { background: white; padding: 15px; display: flex; align-items: center; gap: 15px; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .back-btn { background: #f0f0f0; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; }
+        
         .m-input { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 14px; border: 1.5px solid #ddd; font-family: 'Tajawal'; font-size: 1rem; box-sizing: border-box; }
         .m-btn { width: 100%; padding: 18px; border-radius: 14px; border: none; background: var(--primary); color: white; font-weight: 800; font-size: 1.1rem; cursor: pointer; }
         .product-card { background: white; margin: 12px 15px; padding: 18px; border-radius: 20px; border-right: 6px solid #ddd; }
@@ -55,7 +61,10 @@
 </head>
 <body>
 
-    <audio id="waterSnd" preload="auto"><source src="https://www.soundjay.com/misc/sounds/water-droplet-1.mp3"></audio>
+    <audio id="waterSnd" preload="auto">
+        <source src="https://www.soundjay.com/misc/sounds/water-droplet-1.mp3">
+    </audio>
+
     <div id="statusToast"></div>
 
     <div class="header">
@@ -68,21 +77,22 @@
         <div id="winnerDiv" class="winner-box-fixed">🏆 الفائز: <span id="wName"></span></div>
 
         <div class="section-card">
-            <div class="title-label">🔥 عروض وتخفيضات اليوم</div>
+            <div class="title-label" style="font-weight: 800; margin-bottom: 10px;">🔥 عروض وتخفيضات اليوم</div>
             <div class="grid-small">
-                <div class="offer-box" onclick="openGlobalOffers('مطاعم وكفتيريا', '🍔')"><span>🍔</span><b>المطاعم</b><span id="st-مطاعم وكفتيريا" class="status-tag none">...</span></div>
-                <div class="offer-box" onclick="openGlobalOffers('مواد غذائية', '🍎')"><span>🍎</span><b>الغذاء</b><span id="st-مواد غذائية" class="status-tag none">...</span></div>
-                <div class="offer-box" onclick="openGlobalOffers('مواد بناء وسباكة', '🏗️')"><span>🏗️</span><b>البناء</b><span id="st-مواد بناء وسباكة" class="status-tag none">...</span></div>
-                <div class="offer-box" onclick="openGlobalOffers('مواد كهرباء', '⚡')"><span>⚡</span><b>الكهرباء</b><span id="st-مواد كهرباء" class="status-tag none">...</span></div>
+                <div class="offer-box" onclick="openGlobalOffers('مطاعم وكفتيريا', '🍔')"><span>🍔</span><br><b>المطاعم</b><span id="st-مطاعم وكفتيريا" class="status-tag none">...</span></div>
+                <div class="offer-box" onclick="openGlobalOffers('مواد غذائية', '🍎')"><span>🍎</span><br><b>الغذاء</b><span id="st-مواد غذائية" class="status-tag none">...</span></div>
+                <div class="offer-box" onclick="openGlobalOffers('مواد بناء وسباكة', '🏗️')"><span>🏗️</span><br><b>البناء</b><span id="st-مواد بناء وسباكة" class="status-tag none">...</span></div>
+                <div class="offer-box" onclick="openGlobalOffers('مواد كهرباء', '⚡')"><span>⚡</span><br><b>الكهرباء</b><span id="st-مواد كهرباء" class="status-tag none">...</span></div>
             </div>
         </div>
 
         <div class="section-card" style="background:transparent; box-shadow:none; padding:0;">
-            <div class="title-label">📂 دليل محلات عزان</div>
+            <div class="title-label" style="font-weight: 800; margin-bottom: 10px;">📂 دليل محلات عزان</div>
             <div class="directory-list">
                 <div class="dir-pill" onclick="openFullDirectory('مطاعم وكفتيريا')">🏘️ المطاعم</div>
                 <div class="dir-pill" onclick="openFullDirectory('مواد غذائية')">🍱 البقالات</div>
                 <div class="dir-pill" onclick="openFullDirectory('مواد بناء وسباكة')">🛠️ البناء</div>
+                <div class="dir-pill" onclick="openFullDirectory('مواد كهرباء')">⚡ الكهرباء</div>
             </div>
         </div>
 
@@ -111,7 +121,7 @@
     <div id="storeViewPage" class="full-page"><div class="top-nav"><button class="back-btn" onclick="closePage('storeViewPage')">➜</button><h3 id="svTitle"></h3></div><div id="svProducts"></div></div>
 
     <script>
-        // هذا السطر "يخدع" المتصفح بوجود ملف manifest لكي يظهر خيار التثبيت بملف واحد
+        // إعدادات الـ Manifest لتثبيته كتطبيق
         const manifest = {
             "name": "سوق عزان الموحد",
             "short_name": "سوق عزان",
@@ -119,48 +129,106 @@
             "display": "standalone",
             "background_color": "#f4f7f6",
             "theme_color": "#004d40",
-            "icons": [{"src": "https://cdn-icons-png.flaticon.com/512/3081/3081840.png", "sizes": "512x512", "type": "image/png"}]
+            "icons": [{"src": "https://cdn-icons-png.flaticon.com/512/3081/3081840.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}]
         };
-        const stringManifest = JSON.stringify(manifest);
-        const blob = new Blob([stringManifest], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(blob);
-        document.querySelector('link[rel="manifest"]').setAttribute('href', manifestURL);
+        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+        const link = document.createElement('link'); link.rel = 'manifest'; link.href = URL.createObjectURL(blob); document.head.appendChild(link);
 
-        // باقي كود البرمجة الخاص بك كما هو
+        // Firebase Setup
         const firebaseConfig = { databaseURL: "https://souq-tarim-default-rtdb.firebaseio.com/" };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // نظام الصوت
         function playWater() { const snd = document.getElementById('waterSnd'); snd.currentTime = 0; snd.play().catch(e => {}); }
+        
         function showMsg(msg, isSuccess) { 
             const t = document.getElementById('statusToast'); t.innerText = msg; 
             t.style.background = isSuccess ? "#2ecc71" : "#e74c3c"; t.style.top = "20px"; 
             playWater(); setTimeout(() => t.style.top = "-100px", 3000); 
         }
+
         function openPage(id) { playWater(); document.getElementById(id).style.display='block'; if(id==='merchantPage') checkAuth(); }
         function closePage(id) { playWater(); document.getElementById(id).style.display='none'; }
+
+        // نظام تحديث الحالة (لمعرفة هل يوجد عروض أم لا)
+        function syncStatus() {
+            db.ref('Stores').on('value', sSnap => {
+                const stores = sSnap.val() || {};
+                db.ref('Products').on('value', pSnap => {
+                    const products = pSnap.val() || {};
+                    const cats = ['مواد غذائية', 'مطاعم وكفتيريا', 'مواد بناء وسباكة', 'مواد كهرباء'];
+                    cats.forEach(c => {
+                        let hasOffer = false;
+                        Object.keys(stores).forEach(sid => {
+                            if(stores[sid].category === c && products[sid]) {
+                                Object.values(products[sid]).forEach(p => { if(p.type === 'offer') hasOffer = true; });
+                            }
+                        });
+                        const el = document.getElementById('st-'+c);
+                        if(el) {
+                            el.innerText = hasOffer ? "✅ يوجد عروض" : "لا يوجد عروض";
+                            el.className = "status-tag " + (hasOffer ? "has" : "none");
+                        }
+                    });
+                });
+            });
+        }
+        syncStatus();
+
+        // عرض العروض
+        function openGlobalOffers(cat, icon) {
+            playWater();
+            document.getElementById('pgTitle').innerText = icon + " عروض " + cat;
+            const list = document.getElementById('offersList');
+            list.innerHTML = "<p style='text-align:center; padding:20px;'>جاري البحث...</p>";
+            openPage('offersPage');
+            
+            db.ref('Stores').once('value', sSnap => {
+                const stores = sSnap.val() || {};
+                db.ref('Products').once('value', pSnap => {
+                    list.innerHTML = "";
+                    const allP = pSnap.val() || {};
+                    let found = false;
+                    Object.keys(stores).forEach(sid => {
+                        if(stores[sid].category === cat && allP[sid]) {
+                            Object.values(allP[sid]).forEach(p => {
+                                if(p.type==='offer') {
+                                    found = true;
+                                    list.innerHTML += `<div class="product-card"><b>${p.name}</b> <span style="float:left; color:var(--orange); font-weight:900;">${p.price}</span><br><small>🏪 ${stores[sid].name}</small></div>`;
+                                }
+                            });
+                        }
+                    });
+                    if(!found) list.innerHTML = "<p style='text-align:center; padding:50px; color:#999;'>لا توجد عروض حالياً</p>";
+                });
+            });
+        }
+
+        // لوحة التاجر
         function loginMerchant() { 
             const codeEl = document.getElementById('mCode'); const code = codeEl.value.trim(); 
-            if(!code) { codeEl.classList.add('error-shake'); setTimeout(() => codeEl.classList.remove('error-shake'), 400); showMsg("⚠️ أدخل الرمز السري", false); return; }
+            if(!code) { codeEl.classList.add('error-shake'); setTimeout(() => codeEl.classList.remove('error-shake'), 400); return; }
             db.ref('Stores/' + code).once('value', s => { 
-                if(s.exists()){ localStorage.setItem('azKey', code); localStorage.setItem('azName', s.val().name); showMerchantUI(); showMsg("🔓 تم الدخول بنجاح", true); } 
-                else { codeEl.classList.add('error-shake'); setTimeout(() => codeEl.classList.remove('error-shake'), 400); showMsg("❌ الرمز خطأ!", false); } 
+                if(s.exists()){ localStorage.setItem('azKey', code); localStorage.setItem('azName', s.val().name); showMerchantUI(); showMsg("🔓 تم الدخول", true); } 
+                else { codeEl.classList.add('error-shake'); showMsg("❌ الرمز غير صحيح", false); } 
             }); 
         }
+
         function addProduct() { 
             const key = localStorage.getItem('azKey'); const nEl = document.getElementById('pName'); const pEl = document.getElementById('pPrice'); 
-            if(!nEl.value || !pEl.value) { if(!nEl.value) nEl.classList.add('error-shake'); if(!pEl.value) pEl.classList.add('error-shake'); setTimeout(() => { nEl.classList.remove('error-shake'); pEl.classList.remove('error-shake'); }, 400); showMsg("⚠️ أكمل البيانات", false); return; }
-            db.ref('Products/' + key).push({ name: nEl.value, price: pEl.value, type: document.getElementById('pType').value }).then(() => { showMsg("✅ تم النشر بنجاح", true); nEl.value=""; pEl.value=""; }); 
+            if(!nEl.value || !pEl.value) { showMsg("⚠️ أكمل البيانات", false); return; }
+            db.ref('Products/' + key).push({ name: nEl.value, price: pEl.value, type: document.getElementById('pType').value }).then(() => { showMsg("✅ تم النشر", true); nEl.value=""; pEl.value=""; }); 
         }
+
         function checkAuth() { if(localStorage.getItem('azKey')) showMerchantUI(); }
         function showMerchantUI() { document.getElementById('mAuthArea').style.display = 'none'; document.getElementById('mControlArea').style.display = 'block'; document.getElementById('storeNameDisp').innerText = "🏪 متجر: " + localStorage.getItem('azName'); loadMyProducts(); }
         function loadMyProducts() { db.ref('Products/' + localStorage.getItem('azKey')).on('value', snap => { const list = document.getElementById('mMyProds'); list.innerHTML = ""; snap.forEach(p => { list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;"><span><b>${p.val().name}</b></span><button onclick="deleteProd('${p.key}')" style="color:red; border:none; background:none; cursor:pointer;">حذف</button></div>`; }); }); }
-        function deleteProd(pid) { if(confirm("حذف؟")) db.ref('Products/' + localStorage.getItem('azKey') + '/' + pid).remove(); }
+        function deleteProd(pid) { if(confirm("هل تريد الحذف؟")) db.ref('Products/' + localStorage.getItem('azKey') + '/' + pid).remove(); }
         function logoutMerchant() { localStorage.clear(); location.reload(); }
-        function syncStatus() { db.ref('Products').on('value', pSnap => { const products = pSnap.val() || {}; db.ref('Stores').once('value', sSnap => { const stores = sSnap.val() || {}; const cats = ['مواد غذائية', 'مطاعم وكفتيريا', 'مواد بناء وسباكة', 'مواد كهرباء', 'سلع متنوعة وأخرى']; cats.forEach(c => { let hasOffer = false; Object.keys(stores).forEach(sid => { if(stores[sid].category === c && products[sid]) { Object.values(products[sid]).forEach(p => { if(p.type === 'offer') hasOffer = true; }); } }); const el = document.getElementById('st-'+c); if(el) { if(hasOffer) { el.innerText = "✅ يوجد عروض"; el.className = "status-tag has"; } else { el.innerText = "لا يوجد عروض"; el.className = "status-tag none"; } } }); }); }); }
-        syncStatus();
-        function openGlobalOffers(cat, icon) { playWater(); document.getElementById('pgTitle').innerText = icon + " عروض " + cat; const list = document.getElementById('offersList'); list.innerHTML = "<p style='text-align:center; padding:20px;'>جاري البحث...</p>"; openPage('offersPage'); db.ref('Stores').orderByChild('category').equalTo(cat).once('value', sSnap => { const stores = sSnap.val() || {}; db.ref('Products').once('value', pSnap => { list.innerHTML = ""; const allP = pSnap.val() || {}; let found = false; Object.keys(stores).forEach(sid => { if(allP[sid]) Object.values(allP[sid]).forEach(p => { if(p.type==='offer') { found = true; list.innerHTML += `<div class="product-card"><b>${p.name}</b> <span style="float:left; color:var(--orange); font-weight:900;">${p.price}</span><br><small>🏪 ${stores[sid].name}</small></div>`; } }); }); if(!found) list.innerHTML = "<p style='text-align:center; padding:50px; color:#999;'>لا توجد عروض حالياً</p>"; }); }); }
-        function openFullDirectory(cat) { playWater(); document.getElementById('dirTitle').innerText = "دليل " + cat; const list = document.getElementById('dirStoresList'); list.innerHTML = ""; openPage('directoryPage'); db.ref('Stores').orderByChild('category').equalTo(cat).once('value', snap => { snap.forEach(s => { list.innerHTML += `<div class="product-card" onclick="viewStore('${s.key}', '${s.val().name}', '${s.val().phone}')"><b>${s.val().name}</b><br><small>تصفح ➜ (رمز: ${s.key})</small></div>`; }); }); }
+
+        // الدليل وتصفح المحلات
+        function openFullDirectory(cat) { playWater(); document.getElementById('dirTitle').innerText = "دليل " + cat; const list = document.getElementById('dirStoresList'); list.innerHTML = ""; openPage('directoryPage'); db.ref('Stores').once('value', snap => { snap.forEach(s => { if(s.val().category === cat) list.innerHTML += `<div class="product-card" onclick="viewStore('${s.key}', '${s.val().name}', '${s.val().phone}')"><b>${s.val().name}</b><br><small>تصفح ➜</small></div>`; }); }); }
         function viewStore(id, name, phone) { playWater(); document.getElementById('svTitle').innerText = name; const list = document.getElementById('svProducts'); list.innerHTML = ""; openPage('storeViewPage'); db.ref('Products/' + id).once('value', snap => { snap.forEach(p => { list.innerHTML += `<div class="product-card"><b>${p.val().name}</b><br>السعر: ${p.val().price}</div>`; }); list.innerHTML += `<div style="text-align:center; padding:20px;"><a href="tel:${phone}" class="m-btn" style="text-decoration:none; background:#2ecc71; display:block;">📞 اتصل بالمحل</a></div>`; }); }
     </script>
 </body>
