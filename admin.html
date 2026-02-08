@@ -3,279 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سوق عزان الموحد 🛒</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;800;900&display=swap" rel="stylesheet">
+    <title>لوحة تحكم سوق عزان الشاملة 🔐</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    
+
     <style>
-        :root { --primary: #004d40; --orange: #ff6d00; --bg: #f0f4f7; --text: #2c3e50; }
-        body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); overflow-x: hidden; }
-        .container { max-width: 800px; margin: auto; min-height: 100vh; background: #fdfdfd; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
-        .header { background: linear-gradient(135deg, var(--primary), #00796b); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 40px 40px; }
-        .header h1 { margin: 0; font-size: 1.8rem; font-weight: 900; }
-        .main-content { padding: 0 20px; margin-top: -30px; }
-        .section-card { background: white; border-radius: 25px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); margin-bottom: 20px; border: 1px solid #eee; }
-        .grid-small { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
-        .offer-box { background: white; border-radius: 20px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; border: 1px solid #eee; }
-        .offer-box:active { transform: scale(0.95); }
-        .offer-box b { font-weight: 800; display: block; margin-top: 8px; font-size: 0.9rem; }
-        .status-tag { font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; margin-top: 8px; display: inline-block; }
-        .has { background: #e8f5e9; color: #2e7d32; }
-        .none { background: #f5f5f5; color: #9e9e9e; }
-        .m-btn { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--primary); color: white; font-family: 'Tajawal'; font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
-        .m-btn:hover { opacity: 0.9; }
-        .full-page { display: none; position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 800px; height: 100%; background: var(--bg); z-index: 9999; overflow-y: auto; }
-        .top-nav { background: white; padding: 15px; display: flex; align-items: center; gap: 15px; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 10; }
-        .back-btn { background: #eee; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
-        .directory-list { display: flex; overflow-x: auto; gap: 10px; padding: 10px 0; scrollbar-width: none; }
-        .dir-pill { background: var(--primary); color: white; padding: 10px 20px; border-radius: 25px; font-weight: 800; white-space: nowrap; cursor: pointer; }
-        .product-card { background: white; margin: 10px 0; padding: 15px; border-radius: 20px; border-right: 6px solid #ddd; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
-        input, select { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 1.5px solid #ddd; font-family: 'Tajawal'; font-weight: 700; box-sizing: border-box; outline: none; }
+        :root { --primary: #004d40; --orange: #ff6d00; --bg: #f0f4f7; --red: #d32f2f; --green-click: #2ecc71; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; padding: 20px; direction: rtl; }
+        .container { max-width: 600px; margin: auto; }
+        
+        /* شاشة الدخول */
+        #adminAuth { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .auth-card { background: white; padding: 30px; border-radius: 25px; text-align: center; width: 85%; max-width: 350px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+
+        /* الكروت */
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 5px solid var(--primary); }
+        .contest-card { border-top-color: var(--orange); background: #fffcf0; }
+        
+        h2 { font-weight: 900; color: var(--primary); text-align: center; margin-top: 0; font-size: 1.3rem; }
+        label { font-weight: 700; display: block; margin-top: 12px; color: #555; font-size: 0.85rem; }
+        
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 8px; border-radius: 12px; border: 1.5px solid #eee; font-family: 'Tajawal'; box-sizing: border-box; outline: none; }
         input:focus { border-color: var(--primary); }
+
+        .btn-main { width: 100%; padding: 15px; margin-top: 15px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn-main:active { transform: scale(0.97); }
+
+        /* إدارة المحلات */
+        .store-item { background: white; padding: 12px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .btn-del { background: #ffebee; color: var(--red); padding: 5px 10px; border-radius: 8px; border: none; font-size: 0.7rem; font-weight: 700; cursor: pointer; }
+
+        /* تصميم مربع الكود (أخضر ونقر أسود) */
+        .code-box { 
+            background: #e8f5e9; 
+            color: #81c784; 
+            padding: 10px 12px; 
+            border-radius: 10px; 
+            font-family: monospace; 
+            font-weight: 900; 
+            cursor: pointer; 
+            min-width: 110px;
+            text-align: center;
+            border: 2px solid #c8e6c9;
+            transition: 0.3s;
+            user-select: none;
+        }
+        /* الحالة عند النقر (تفعيل من JS) */
+        .code-box.active-code { 
+            background: var(--green-click) !important; 
+            color: #000000 !important; 
+            border-color: #27ae60 !important;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+        }
+
+        /* تنبيه حديث */
+        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); padding: 12px 25px; border-radius: 50px; z-index: 10000; transition: 0.5s; font-weight: 700; color: white; text-align: center; }
     </style>
 </head>
 <body>
 
-    <audio id="waterSnd" preload="auto"><source src="https://www.soundjay.com/nature/sounds/water-droplet-1.mp3"></audio>
+<audio id="waterSnd"><source src="https://www.soundjay.com/nature/sounds/water-droplet-1.mp3"></audio>
+<div id="toast"></div>
 
-    <div class="container">
-        <div class="header">
-            <h1>سوق عزان الموحد 🛒</h1>
-            <p>دليلك الذكي للتسوق والمسابقات</p>
-        </div>
+<div id="adminAuth">
+    <div class="auth-card">
+        <div style="font-size: 3.5rem; margin-bottom: 10px;">🔐</div>
+        <h3>دخول الإدارة العامة</h3>
+        <input type="password" id="adminPass" placeholder="الرمز السري">
+        <button class="btn-main" onclick="checkAuth()">دخول</button>
+    </div>
+</div>
 
-        <div class="main-content">
-            <div id="winnerDiv" class="section-card" style="display:none; background: #fff9c4; border: 2px solid #f1c40f; text-align: center;">
-                🏆 <b style="color: #d35400;">فائز اليوم:</b> <span id="wName" style="font-weight: 900;"></span>
-            </div>
-
-            <div id="ramadanSection" class="section-card" style="border: 3px solid var(--orange); display: none;">
-                <div style="color: var(--orange); font-weight: 900; margin-bottom: 10px;">🌙 مسابقة رمضان</div>
-                <p id="qDisplay" style="font-weight: 800;"></p>
-                <button onclick="sendAns()" class="m-btn" style="background: #25D366;">إرسال الحل عبر واتساب ✅</button>
-            </div>
-
-            <div class="section-card">
-                <div style="font-weight: 900; margin-bottom: 15px;">🔥 تخفيضات الأقسام</div>
-                <div class="grid-small">
-                    <div class="offer-box" onclick="openOffers('مطاعم وكفتيريا', '🍔')"><span>🍔</span><b>المطاعم</b><span id="st-مطاعم وكفتيريا" class="status-tag none">...</span></div>
-                    <div class="offer-box" onclick="openOffers('مواد غذائية', '🍎')"><span>🍎</span><b>البقالات</b><span id="st-مواد غذائية" class="status-tag none">...</span></div>
-                    <div class="offer-box" onclick="openOffers('مواد بناء وسباكة', '🏗️')"><span>🏗️</span><b>البناء</b><span id="st-مواد بناء وسباكة" class="status-tag none">...</span></div>
-                    <div class="offer-box" onclick="openOffers('مواد كهرباء', '⚡')"><span>⚡</span><b>الكهرباء</b><span id="st-مواد كهرباء" class="status-tag none">...</span></div>
-                    <div class="offer-box" onclick="openOffers('سلع متنوعة وأخرى', '🛒')"><span>🛒</span><b>أخرى</b><span id="st-سلع متنوعة وأخرى" class="status-tag none">...</span></div>
-                </div>
-            </div>
-
-            <div class="section-card">
-                <div style="font-weight: 900;">📂 دليل المحلات</div>
-                <div class="directory-list">
-                    <div class="dir-pill" onclick="openDir('مطاعم وكفتيريا')">🏘️ المطاعم</div>
-                    <div class="dir-pill" onclick="openDir('مواد غذائية')">🍱 البقالات</div>
-                    <div class="dir-pill" onclick="openDir('مواد بناء وسباكة')">🛠️ البناء</div>
-                    <div class="dir-pill" onclick="openDir('مواد كهرباء')">💡 الكهرباء</div>
-                    <div class="dir-pill" onclick="openDir('سلع متنوعة وأخرى')">🏷️ أخرى</div>
-                </div>
-            </div>
-
-            <button onclick="openPage('merchantPage')" class="m-btn" style="background: #37474f; margin-bottom: 40px;">🔐 لوحة التاجر</button>
-        </div>
+<div class="container" id="adminPanel" style="display:none;">
+    
+    <div class="card contest-card">
+        <h2 style="color: var(--orange);">🌙 التحكم بمسابقة رمضان</h2>
+        <label>حالة المسابقة:</label>
+        <select id="cStatus" onchange="playWater()">
+            <option value="off">❌ إخفاء</option>
+            <option value="on">✅ إظهار</option>
+        </select>
+        <label>سؤال المسابقة:</label>
+        <textarea id="cQuestion" rows="2" placeholder="اكتب السؤال..."></textarea>
+        <label>حالة إعلان الفائز:</label>
+        <select id="winStatus" onchange="playWater()">
+            <option value="off">❌ مخفي</option>
+            <option value="on">✅ ظاهر</option>
+        </select>
+        <label>اسم الفائز:</label>
+        <input type="text" id="cWinner" placeholder="اسم الفائز">
+        <button class="btn-main" style="background:var(--orange)" onclick="saveContest()">تحديث المسابقة 🚀</button>
     </div>
 
-    <div id="offersPage" class="full-page">
-        <div class="top-nav"><button class="back-btn" onclick="closePage('offersPage')">✕</button><h3 id="pgTitle" style="margin:0; font-weight:900;"></h3></div>
-        <div id="offersList" style="padding:15px;"></div>
+    <div class="card">
+        <h2>🏪 إضافة محل جديد</h2>
+        <input type="text" id="storeName" placeholder="اسم المحل">
+        <input type="text" id="storePhone" placeholder="رقم الواتساب">
+        <label>فئة المحل:</label>
+        <select id="storeCat">
+            <option value="مواد غذائية">مواد غذائية</option>
+            <option value="مطاعم وكفتيريا">مطاعم وكفتيريا</option>
+            <option value="مواد بناء وسباكة">مواد بناء وسباكة</option>
+            <option value="مواد كهرباء">مواد كهرباء</option>
+            <option value="سلع متنوعة وأخرى">سلع متنوعة وأخرى</option>
+        </select>
+        <button class="btn-main" onclick="addStore()">توليد الكود ✅</button>
     </div>
 
-    <div id="dirPage" class="full-page">
-        <div class="top-nav"><button class="back-btn" onclick="closePage('dirPage')">✕</button><h3 id="dirTitle" style="margin:0; font-weight:900;"></h3></div>
-        <div style="padding: 15px;">
-            <input type="text" id="searchInp" placeholder="بحث عن اسم محل..." onkeyup="searchStores()">
-            <div id="dirList"></div>
-        </div>
+    <div class="card">
+        <h2>📋 دليل المحلات</h2>
+        <input type="text" id="search" placeholder="ابحث عن محل..." onkeyup="filterStores()">
+        <div id="storesList" style="margin-top: 15px;"></div>
     </div>
+</div>
 
-    <div id="merchantPage" class="full-page">
-        <div class="top-nav"><button class="back-btn" onclick="closePage('merchantPage')">✕</button><h3 style="margin:0; font-weight:900;">إدارة المحل</h3></div>
-        <div id="mAuth" style="padding:30px;">
-            <input type="password" id="mCode" placeholder="كود المحل الخاص">
-            <button class="m-btn" onclick="loginMerchant()">دخول</button>
-        </div>
-        <div id="mPanel" style="display:none; padding:20px;">
-            <div id="mNameDisp" style="padding:15px; background:var(--primary); color:white; border-radius:15px; margin-bottom:15px; text-align:center; font-weight:900;"></div>
-            <input type="text" id="pName" placeholder="اسم المنتج">
-            <input type="text" id="pPrice" placeholder="السعر">
-            <select id="pType"><option value="offer">🔥 تخفيض</option><option value="normal">📦 عادي</option></select>
-            <button class="m-btn" onclick="addProduct()">نشر الآن ✅</button>
-            <hr style="margin:20px 0; border:0; border-top:1px solid #ddd;">
-            <div style="font-weight: 800; margin-bottom: 10px;">منتجاتك الحالية:</div>
-            <div id="mProds"></div>
-            <button onclick="logout()" style="width:100%; background:none; border:none; color:red; margin-top:30px; font-weight:900; cursor:pointer;">تسجيل الخروج</button>
-        </div>
-    </div>
+<script>
+    const ADMIN_KEY = "123456"; 
+    const firebaseConfig = { databaseURL: "https://souq-tarim-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    <script>
-        // إعدادات Firebase
-        const firebaseConfig = { databaseURL: "https://souq-tarim-default-rtdb.firebaseio.com/" };
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+    function playWater() { 
+        const s = document.getElementById('waterSnd');
+        s.currentTime = 0; s.play().catch(()=>{}); 
+    }
 
-        // وظائف الواجهة
-        function playWater() { const snd = document.getElementById('waterSnd'); snd.currentTime = 0; snd.play().catch(e=>{}); }
-        function openPage(id) { playWater(); document.getElementById(id).style.display='block'; if(id==='merchantPage') checkAuth(); }
-        function closePage(id) { playWater(); document.getElementById(id).style.display='none'; }
+    function showToast(msg, bgColor = "#333") {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.style.background = bgColor;
+        t.style.top = "30px";
+        setTimeout(() => { t.style.top = "-100px"; }, 3000);
+    }
 
-        // مزامنة المسابقة والجوائز
+    function checkAuth() {
+        const pass = document.getElementById('adminPass').value;
+        if(pass === ADMIN_KEY) {
+            playWater();
+            document.getElementById('adminAuth').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            syncData();
+        } else {
+            playWater();
+            showToast("❌ الرمز السري غير صحيح!", "#d32f2f");
+            document.getElementById('adminPass').value = "";
+        }
+    }
+
+    function syncData() {
         db.ref('RamadanContest').on('value', snap => {
-            const d = snap.val(); if(!d) return;
-            document.getElementById('ramadanSection').style.display = d.status === 'on' ? 'block' : 'none';
-            document.getElementById('qDisplay').innerText = d.question;
-            if(d.winStatus === 'on' && d.winner) {
-                document.getElementById('winnerDiv').style.display = 'block';
-                document.getElementById('wName').innerText = d.winner;
-            } else {
-                document.getElementById('winnerDiv').style.display = 'none';
+            const d = snap.val();
+            if(d) {
+                document.getElementById('cStatus').value = d.status || 'off';
+                document.getElementById('cQuestion').value = d.question || '';
+                document.getElementById('cWinner').value = d.winner || '';
+                document.getElementById('winStatus').value = d.winStatus || 'off';
             }
         });
+        loadStores();
+    }
 
-        // تحديث حالة وجود عروض في الصفحة الرئيسية
-        function syncStatus() {
-            const cats = ['مواد غذائية', 'مطاعم وكفتيريا', 'مواد بناء وسباكة', 'مواد كهرباء', 'سلع متنوعة وأخرى'];
-            db.ref('Products').on('value', pSnap => {
-                const prods = pSnap.val() || {};
-                db.ref('Stores').once('value', sSnap => {
-                    const stores = sSnap.val() || {};
-                    cats.forEach(c => {
-                        let hasOffer = false;
-                        Object.keys(stores).forEach(sid => {
-                            if(stores[sid].category === c && prods[sid]) {
-                                Object.values(prods[sid]).forEach(p => { if(p.type==='offer') hasOffer = true; });
-                            }
-                        });
-                        const el = document.getElementById('st-'+c);
-                        if(el) {
-                            el.innerText = hasOffer ? "✅ عروض" : "لا يوجد";
-                            el.className = "status-tag " + (hasOffer ? "has" : "none");
-                        }
-                    });
-                });
-            });
-        }
-        syncStatus();
+    function addStore() {
+        const name = document.getElementById('storeName').value;
+        const phone = document.getElementById('storePhone').value;
+        const cat = document.getElementById('storeCat').value;
+        if(!name || !phone) return showToast("⚠️ أكمل البيانات", "#ff6d00");
 
-        // فتح العروض حسب القسم
-        function openOffers(cat, icon) {
-            playWater(); 
-            document.getElementById('pgTitle').innerText = icon + " عروض " + cat;
-            const list = document.getElementById('offersList'); 
-            list.innerHTML = "<p style='text-align:center'>جاري البحث عن تخفيضات...</p>"; 
-            openPage('offersPage');
+        playWater();
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        let p1 = ""; let p2 = "";
+        for(let i=0; i<3; i++) p1 += chars.charAt(Math.floor(Math.random() * chars.length));
+        for(let i=0; i<3; i++) p2 += chars.charAt(Math.floor(Math.random() * chars.length));
+        const code = "AZ-" + p1 + "-" + p2 + "-" + Math.floor(100 + Math.random() * 899);
 
-            db.ref('Stores').orderByChild('category').equalTo(cat).once('value', sSnap => {
-                const stores = sSnap.val() || {};
-                db.ref('Products').once('value', pSnap => {
-                    const prods = pSnap.val() || {}; 
-                    list.innerHTML = "";
-                    let count = 0;
-                    Object.keys(stores).forEach(sid => {
-                        if(prods[sid]) Object.values(prods[sid]).forEach(p => {
-                            if(p.type==='offer') {
-                                list.innerHTML += `<div class="product-card" style="border-right-color:var(--orange)">
-                                    <b style="font-size:1.1rem">${p.name}</b> 
-                                    <span style="float:left; color:var(--orange); font-weight:900;">${p.price}</span>
-                                    <div style="margin-top:8px; font-size:0.8rem; color:#666">🏪 ${stores[sid].name}</div>
-                                </div>`;
-                                count++;
-                            }
-                        });
-                    });
-                    if(count === 0) list.innerHTML = "<p style='text-align:center; margin-top:40px; color:#999;'>نعتذر، لا توجد عروض حالياً في هذا القسم</p>";
-                });
-            });
-        }
+        db.ref('Stores/' + code).set({ name, phone, category: cat }).then(() => {
+            showToast("✅ تم إضافة " + name, "#004d40");
+            document.getElementById('storeName').value = "";
+            document.getElementById('storePhone').value = "";
+        });
+    }
 
-        // فتح دليل المحلات
-        function openDir(cat) {
-            playWater(); 
-            document.getElementById('dirTitle').innerText = "دليل " + cat;
-            const list = document.getElementById('dirList'); 
-            list.innerHTML = "جاري التحميل..."; 
-            openPage('dirPage');
-            db.ref('Stores').orderByChild('category').equalTo(cat).once('value', snap => {
-                list.innerHTML = "";
-                if(!snap.exists()) { list.innerHTML = "لا توجد محلات مسجلة"; return; }
-                snap.forEach(s => {
-                    const data = s.val();
-                    list.innerHTML += `<div class="product-card" onclick="window.open('tel:${data.phone}')">
-                        <b>${data.name}</b><br>
-                        <small>📞 اضغط للاتصال: ${data.phone}</small>
+    function loadStores() {
+        db.ref('Stores').on('value', snap => {
+            const list = document.getElementById('storesList');
+            list.innerHTML = "";
+            const data = snap.val();
+            if(!data) return;
+            Object.keys(data).forEach(id => {
+                list.innerHTML += `
+                    <div class="store-item" data-name="${data[id].name}">
+                        <div>
+                            <b>${data[id].name}</b><br>
+                            <small style="color:#777">${data[id].category || ''}</small><br>
+                            <button class="btn-del" onclick="deleteStore('${id}')">حذف</button>
+                        </div>
+                        <div class="code-box" onclick="handleCodeClick(this, '${id}')">••••••••</div>
                     </div>`;
-                });
             });
-        }
+        });
+    }
 
-        // وظيفة البحث
-        function searchStores() {
-            let filter = document.getElementById('searchInp').value.toLowerCase();
-            let cards = document.querySelectorAll('#dirList .product-card');
-            cards.forEach(card => {
-                card.style.display = card.innerText.toLowerCase().includes(filter) ? "" : "none";
-            });
-        }
+    function handleCodeClick(el, code) {
+        playWater();
+        navigator.clipboard.writeText(code);
+        
+        // تغيير الشكل عند النقر
+        el.innerText = code;
+        el.classList.add('active-code');
+        showToast("📋 تم نسخ الكود: " + code, "#2ecc71");
 
-        // نظام إدارة التاجر
-        function loginMerchant() {
-            const code = document.getElementById('mCode').value;
-            if(!code) return;
-            db.ref('Stores/'+code).once('value', s => {
-                if(s.exists()){ 
-                    localStorage.setItem('storeKey', code); 
-                    localStorage.setItem('storeName', s.val().name); 
-                    checkAuth(); 
-                    playWater(); 
-                } else { alert("كود الدخول غير صحيح!"); }
-            });
-        }
+        // الإخفاء التلقائي بعد 2.5 ثانية
+        setTimeout(() => {
+            el.innerText = "••••••••";
+            el.classList.remove('active-code');
+        }, 2500);
+    }
 
-        function checkAuth() {
-            const key = localStorage.getItem('storeKey');
-            if(key) { 
-                document.getElementById('mAuth').style.display='none'; 
-                document.getElementById('mPanel').style.display='block'; 
-                document.getElementById('mNameDisp').innerText = "🏪 متجر: " + localStorage.getItem('storeName');
-                loadMyProds(key);
-            }
-        }
+    function saveContest() {
+        playWater();
+        db.ref('RamadanContest').update({
+            status: document.getElementById('cStatus').value,
+            question: document.getElementById('cQuestion').value,
+            winner: document.getElementById('cWinner').value,
+            winStatus: document.getElementById('winStatus').value 
+        }).then(() => showToast("🚀 تم تحديث المسابقة", "#ff6d00"));
+    }
 
-        function addProduct() {
-            const key = localStorage.getItem('storeKey');
-            const name = document.getElementById('pName').value;
-            const price = document.getElementById('pPrice').value;
-            const type = document.getElementById('pType').value;
-            if(!name || !price) { alert("أدخل البيانات"); return; }
-            db.ref('Products/'+key).push({ name, price, type }).then(() => {
-                document.getElementById('pName').value=""; 
-                document.getElementById('pPrice').value=""; 
-                playWater();
-            });
-        }
+    function deleteStore(id) {
+        if(confirm("حذف المحل؟")) { playWater(); db.ref('Stores/' + id).remove(); }
+    }
 
-        function loadMyProds(key) {
-            db.ref('Products/'+key).on('value', snap => {
-                const list = document.getElementById('mProds'); list.innerHTML = "";
-                snap.forEach(p => {
-                    const item = p.val();
-                    list.innerHTML += `<div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; background:white; margin-bottom:5px; border-radius:10px;">
-                        <div><b>${item.name}</b> <br> <small style="color:var(--orange)">${item.price} (${item.type === 'offer' ? 'عروض' : 'عادي'})</small></div>
-                        <button onclick="delP('${p.key}')" style="color:white; background:#e74c3c; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;">حذف</button>
-                    </div>`;
-                });
-            });
-        }
-
-        function delP(pid) { if(confirm("هل متأكد من حذف هذا المنتج؟")) db.ref('Products/'+localStorage.getItem('storeKey')+'/'+pid).remove(); }
-        function logout() { localStorage.clear(); location.reload(); }
-        function sendAns() { playWater(); window.open('https://wa.me/967776337604', '_blank'); }
-    </script>
+    function filterStores() {
+        const val = document.getElementById('search').value.toLowerCase();
+        document.querySelectorAll('.store-item').forEach(item => {
+            item.style.display = item.dataset.name.toLowerCase().includes(val) ? "flex" : "none";
+        });
+    }
+</script>
 </body>
 </html>
